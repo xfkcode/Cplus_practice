@@ -3,7 +3,7 @@ using namespace std;
 
 int main()
 {
-	//gotoÓï¾ä
+	//goto
 	cout << 1 << endl;
 	cout << 2 << endl;
 	goto FLAG;
