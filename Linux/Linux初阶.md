@@ -16,10 +16,10 @@
 
 #### 1.2 路径
 
-- 绝对路径：根目录开始直到到达目标文件所经过的所有节点目录
+- 绝对路径：根目录开始直到到达目标文件所经过的所有节点目录  
                      1️⃣ `/.../...` 
-- 相对路径：目标目录相对于当前目录的位置
-                     1️⃣ `./` 当前目录
+- 相对路径：目标目录相对于当前目录的位置  
+                     1️⃣ `./` 当前目录  
                      2️⃣ `../` 上级目录
 
 ```
@@ -56,17 +56,17 @@ ls -l
 
 ### 2. Linux命令🥽
 
-Linux命令格式：
+Linux命令格式：  
 `command [-options] [parameter1] ...` 
 
 - command：命令名
 - [-options]：选项
 - parameter1 ... ：参数可多个
 
-Linux帮助文档：
+Linux帮助文档：  
 `command --help` 
 
-Linux man手册：man 是系统的手册分页程序
+Linux man手册：man 是系统的手册分页程序  
 `man [选项] 命令名`
 
 1. 可执行程序或shell命令
@@ -215,11 +215,11 @@ Desktop    Downloads  outfile   Pictures  ...  test1.txt  test2.txt  Testdir_cp 
 [xfk@centos ~]$ ls
 Desktop    Downloads  outfile   Pictures  Templates  test1  test2.txt  Testdir_cp  work.txt
 Documents  Music      outfile1  Public    test       test2  Testdir    Videos      yum.conf
-[xfk@centos ~]$ ls ./Testdir							//目标目录出现test.txt
+[xfk@centos ~]$ ls ./Testdir						//目标目录出现test.txt
 abc.c  outfile  test1.txt  test.txt
 
 >>>目录转移
-[xfk@centos ~]$ ls -ld mvdir							//mvdir文件转移
+[xfk@centos ~]$ ls -ld mvdir						//mvdir文件转移
 drwxrwxr-x. 2 xfk xfk 47 1月   5 22:00 mvdir
 [xfk@centos ~]$ mv mvdir ./Testdir
 [xfk@centos ~]$ ls -ld mvdir
@@ -249,9 +249,9 @@ core: symbolic link to `/proc/kcore'
 
 备份工具，可以把一系列文件归档到一个打文件中，也可以把档案文件解开以恢复数据（打包文件并不压缩）。
 
-`tar [zcvf/jcvf] 打包文件名xxx.tar.gz/bz2 文件 ...` <<<**打包压缩**
-压缩zcvf：z -> gzip   解压tar zxvf xxx.tar.gz
-压缩jcvf：j -> bzip2  解压tar jxvf xxx.tar.bz2
+`tar [zcvf/jcvf] 打包文件名xxx.tar.gz/bz2 文件 ...` <<<**打包压缩**  
+压缩zcvf：z -> gzip   解压tar zxvf xxx.tar.gz  
+压缩jcvf：j -> bzip2  解压tar jxvf xxx.tar.bz2 
 
 | 参数 | 含义                                                  |
 | ---- | ----------------------------------------------------- |
