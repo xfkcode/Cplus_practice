@@ -325,7 +325,7 @@ passwd: all authentication tokens updated successfully.
 
 ###### 3）chmod 修改文件权限
 
-字母法：`chmod u/g/o/a +/-/= rwx 文件`   
+字母法：`chmod [u/g/o/a] [+/-/=] [rwx] 文件`   
 **u**文件所有者 **g**文件所属组 **o**其他用户 **a**以上三种  
 **+**增加权限 **-**撤销权限 **=**设定权限  
 **r**读 **w**写 **x**执行
@@ -346,7 +346,7 @@ drwxrwxr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 ```
 
-数字法：`chmod u/g/o/a = 数字 文件`  
+数字法：`chmod [u/g/o/a =] 数字 文件`  
 
 | rwx        | 数字 |
 | ---------- | ---- |
@@ -360,11 +360,27 @@ drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 | rwx（111） | 7    |
 
 ```
->>>421/u=4,g=2,o=1
+>>>421/u=4,g=2,o=1,所属者只读，所属组只写，其他用户只执行
 [xfk@centos ~]$ ls -ld Testdir
 drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 [xfk@centos ~]$ chmod 421 Testdir
 [xfk@centos ~]$ ls -ld Testdir
 dr---w---x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+
+>>>[-R],递归修改目录所有文件
+[xfk@centos ~]$ chmod 777 Testdir -R
+[root@centos xfk]# ls -l Testdir
+total 4
+-rwxrwxrwx. 1 xfk xfk   0 Jan  5 18:56 abc.c
+drwxrwxrwx. 2 xfk xfk  47 Jan  5 22:00 mvdir
+-rwxrwxrwx. 1 xfk xfk 152 Jan  5 18:58 outfile
+-rwxrwxrwx. 1 xfk xfk   0 Jan  5 18:57 test.txt
+[root@centos xfk]# chmod 666 Testdir -R
+[root@centos xfk]# ls -l Testdir
+total 4
+-rw-rw-rw-. 1 xfk xfk   0 Jan  5 18:56 abc.c
+drw-rw-rw-. 2 xfk xfk  47 Jan  5 22:00 mvdir
+-rw-rw-rw-. 1 xfk xfk 152 Jan  5 18:58 outfile
+-rw-rw-rw-. 1 xfk xfk   0 Jan  5 18:57 test.txt
 ```
 
