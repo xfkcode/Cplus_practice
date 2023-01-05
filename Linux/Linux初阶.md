@@ -249,17 +249,19 @@ core: symbolic link to `/proc/kcore'
 
 备份工具，可以把一系列文件归档到一个打文件中，也可以把档案文件解开以恢复数据（打包文件并不压缩）。
 
-`tar [zcvf/jcvf] 打包文件名xxx.tar.gz 文件 ...` <<<**打包压缩**
-zcvf：z -> gzip 
-jcvf：j -> bzip2
+`tar [zcvf/jcvf] 打包文件名xxx.tar.gz/bz2 文件 ...` <<<**打包压缩**
+压缩zcvf：z -> gzip   解压tar zxvf xxx.tar.gz
+压缩jcvf：j -> bzip2  解压tar jxvf xxx.tar.bz2
 
 | 参数 | 含义                                                  |
 | ---- | ----------------------------------------------------- |
 | -c   | 生成档案文件，创建打包文件                            |
 | -f   | 指定档案文件名称，f后面一定是.tar文件，必须放选项最后 |
 | -v   | 列出归档解档的详细过程，显示进度                      |
+| -x   | 解压                                                  |
 
 ```
+>>>压缩
 [xfk@centos ~]$ cd ./Testdir
 [xfk@centos Testdir]$ ls
 abc.c  mvdir  outfile  test1.txt  test.txt
@@ -274,5 +276,50 @@ mvdir/abc.txt
 abc.c  mvdir  outfile  test1.txt  test.txt  xxx.tar.gz
 [xfk@centos Testdir]$ file  xxx.tar.gz
 xxx.tar.gz: gzip compressed data, from Unix, last modified: Thu Jan  5 22:38:41 2023
+
+>>>解压
+[xfk@centos Testdir_cp]$ ls
+abc.c  outfile  test.txt  xxx.tar.gz
+[xfk@centos Testdir_cp]$ tar zxvf xxx.tar.gz
+abc.c
+outfile
+mvdir/
+mvdir/abc.c
+mvdir/abc.h
+mvdir/abc.txt
+[xfk@centos Testdir_cp]$ ls
+abc.c  mvdir  outfile  test.txt  xxx.tar.gz
+```
+
+##### 2.1.2 用户、权限管理
+
+###### 1）su  切换用户
+
+| 命令             | 含义                                     |
+| ---------------- | ---------------------------------------- |
+| su / su root     | 切换到 root 用户                         |
+| su - / su - root | 切换到root用户，同时切换目录到/root      |
+| su 普通用户      | 切换到普通用户                           |
+| su - 普通用户    | 切换到普通用户，同时切换目录到用户家目录 |
+
+```
+[xfk@centos ~]$ su -
+Password: 											//隐藏输入密码
+Last login: Thu Jan  5 23:07:05 CST 2023 on pts/0
+[root@centos ~]#
+```
+
+###### 2）passwd 修改密码
+
+```
+[xfk@centos ~]$ passwd
+Changing password for user xfk.
+Changing password for xfk.
+(current) UNIX password: 
+New password: 
+BAD PASSWORD: The password is shorter than 8 characters
+New password: 
+Retype new password: 
+passwd: all authentication tokens updated successfully.
 ```
 
