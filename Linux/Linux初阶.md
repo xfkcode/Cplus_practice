@@ -211,15 +211,15 @@ abc.c  outfile  test.txt
 >>>文件转移
 [xfk@centos ~]$ ls
 Desktop    Downloads  outfile   Pictures  ...  test1.txt  test2.txt  Testdir_cp  work.txt
-[xfk@centos ~]$  mv -i test1.txt ./Testdir														//test1.txt文件转移，原目录移除
+[xfk@centos ~]$  mv -i test1.txt ./Testdir										//test1.txt文件转移，原目录移除
 [xfk@centos ~]$ ls
 Desktop    Downloads  outfile   Pictures  Templates  test1  test2.txt  Testdir_cp  work.txt
 Documents  Music      outfile1  Public    test       test2  Testdir    Videos      yum.conf
-[xfk@centos ~]$ ls ./Testdir																	//目标目录出现test.txt
+[xfk@centos ~]$ ls ./Testdir													//目标目录出现test.txt
 abc.c  outfile  test1.txt  test.txt
 
 >>>目录转移
-[xfk@centos ~]$ ls -ld mvdir																	//mvdir文件转移
+[xfk@centos ~]$ ls -ld mvdir													//mvdir文件转移
 drwxrwxr-x. 2 xfk xfk 47 1月   5 22:00 mvdir
 [xfk@centos ~]$ mv mvdir ./Testdir
 [xfk@centos ~]$ ls -ld mvdir
@@ -322,4 +322,6 @@ New password:
 Retype new password: 
 passwd: all authentication tokens updated successfully.
 ```
+
+###### 3）chmod 修改文件权限
 
