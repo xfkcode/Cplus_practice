@@ -325,3 +325,46 @@ passwd: all authentication tokens updated successfully.
 
 ###### 3）chmod 修改文件权限
 
+字母法：`chmod u/g/o/a +/-/= rwx 文件`   
+**u**文件所有者 **g**文件所属组 **o**其他用户 **a**以上三种  
+**+**增加权限 **-**撤销权限 **=**设定权限  
+**r**读 **w**写 **x**执行
+
+```
+>>>g-rwx，所属组权限撤销rwx
+[xfk@centos ~]$ ls -ld Testdir
+drwxrwxr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+[xfk@centos ~]$ chmod g-rwx Testdir
+[xfk@centos ~]$ ls -ld Testdir
+drwx---r-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+
+>>>g=x,所属组权限这是为只执行x
+[xfk@centos ~]$ ls -ld Testdir
+drwxrwxr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+[xfk@centos ~]$ chmod g=x Testdir
+[xfk@centos ~]$ ls -ld Testdir
+drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+```
+
+数字法：`chmod u/g/o/a = 数字 文件`  
+
+| rwx        | 数字 |
+| ---------- | ---- |
+| ---（000） | 0    |
+| --x（001） | 1    |
+| -w-（010） | 2    |
+| -wx（011） | 3    |
+| r--（100） | 4    |
+| r-x（101） | 5    |
+| rw-（110） | 6    |
+| rwx（111） | 7    |
+
+```
+>>>421/u=4,g=2,o=1
+[xfk@centos ~]$ ls -ld Testdir
+drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+[xfk@centos ~]$ chmod 421 Testdir
+[xfk@centos ~]$ ls -ld Testdir
+dr---w---x. 3 xfk xfk 80 Jan  5 22:51 Testdir
+```
+
