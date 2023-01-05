@@ -1,4 +1,4 @@
-
+# Linux初阶
 
 ### 1. Linux文件系统🗃️
 
@@ -194,11 +194,85 @@ tq
 [xfk@centos ~]$ cp outfile ./outfile1				//不存在创建
 [xfk@centos ~]$ ls -l outfile1
 -rw-rw-r--. 1 xfk xfk 978 1月   5 18:49 outfile1
+
 >>>目录拷贝
 [xfk@centos ~]$ ls Testdir
 abc.c  outfile  test.txt
 [xfk@centos ~]$ cp -r  Testdir ./Testdir_cp
 [xfk@centos ~]$ ls Testdir_cp
 abc.c  outfile  test.txt
+```
+
+###### 10）mv 移动文件
+
+移动文件或目录、改名
+
+```
+>>>文件转移
+[xfk@centos ~]$ ls
+Desktop    Downloads  outfile   Pictures  ...  test1.txt  test2.txt  Testdir_cp  work.txt
+[xfk@centos ~]$  mv -i test1.txt ./Testdir														//test1.txt文件转移，原目录移除
+[xfk@centos ~]$ ls
+Desktop    Downloads  outfile   Pictures  Templates  test1  test2.txt  Testdir_cp  work.txt
+Documents  Music      outfile1  Public    test       test2  Testdir    Videos      yum.conf
+[xfk@centos ~]$ ls ./Testdir																	//目标目录出现test.txt
+abc.c  outfile  test1.txt  test.txt
+
+>>>目录转移
+[xfk@centos ~]$ ls -ld mvdir																	//mvdir文件转移
+drwxrwxr-x. 2 xfk xfk 47 1月   5 22:00 mvdir
+[xfk@centos ~]$ mv mvdir ./Testdir
+[xfk@centos ~]$ ls -ld mvdir
+ls: 无法访问mvdir: 没有那个文件或目录
+[xfk@centos ~]$ ls -ld ./Testdir
+drwxrwxr-x. 3 xfk xfk 80 1月   5 22:02 ./Testdir
+
+>>>改名（同一个目录下）
+[xfk@centos ~]$ ls -ld test
+dr---w---x. 3 root root 17 11月 17 19:37 test
+[xfk@centos ~]$ mv test TEST
+[xfk@centos ~]$ ls -ld TEST
+dr---w---x. 3 root root 17 11月 17 19:37 TEST
+```
+
+###### 11）file 查看文件属性
+
+```
+>>> file 文件名
+[xfk@centos dev]$ file log
+log: socket
+[xfk@centos dev]$ file core 
+core: symbolic link to `/proc/kcore'
+```
+
+###### 12）tar 归档管理
+
+备份工具，可以把一系列文件归档到一个打文件中，也可以把档案文件解开以恢复数据（打包文件并不压缩）。
+
+`tar [zcvf/jcvf] 打包文件名xxx.tar.gz 文件 ...` <<<**打包压缩**
+zcvf：z -> gzip 
+jcvf：j -> bzip2
+
+| 参数 | 含义                                                  |
+| ---- | ----------------------------------------------------- |
+| -c   | 生成档案文件，创建打包文件                            |
+| -f   | 指定档案文件名称，f后面一定是.tar文件，必须放选项最后 |
+| -v   | 列出归档解档的详细过程，显示进度                      |
+
+```
+[xfk@centos ~]$ cd ./Testdir
+[xfk@centos Testdir]$ ls
+abc.c  mvdir  outfile  test1.txt  test.txt
+[xfk@centos Testdir]$ tar zcvf xxx.tar.gz abc.c outfile mvdir					//参数-可省略，gzip压缩
+abc.c
+outfile
+mvdir/
+mvdir/abc.c
+mvdir/abc.h
+mvdir/abc.txt
+[xfk@centos Testdir]$ ls
+abc.c  mvdir  outfile  test1.txt  test.txt  xxx.tar.gz
+[xfk@centos Testdir]$ file  xxx.tar.gz
+xxx.tar.gz: gzip compressed data, from Unix, last modified: Thu Jan  5 22:38:41 2023
 ```
 
