@@ -384,3 +384,112 @@ drw-rw-rw-. 2 xfk xfk  47 Jan  5 22:00 mvdir
 -rw-rw-rw-. 1 xfk xfk   0 Jan  5 18:57 test.txt
 ```
 
+##### 2.1.3 系统管理
+
+###### 1）ps 查看进程
+
+**进程** 是一个具有一定独立功能的程序，它是操作系统动态执行的基本单元。
+
+| 选项 | 含义                   |
+| ---- | ---------------------- |
+| -a   | 显示终端上所有进程     |
+| -u   | 显示进程的详细状态     |
+| -x   | 显示没有控制终端的进程 |
+| -w   | 显示加宽               |
+| -r   | 只显示正在运行的进程   |
+
+```
+>>>
+[xfk@centos ~]$ ps aux 
+USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root          1  0.0  0.4 193804  4600 ?        Ss   03:06   0:11 /usr/lib/systemd/systemd --switched-root --s
+root          2  0.0  0.0      0     0 ?        S    03:06   0:00 [kthreadd]
+root          3  0.0  0.0      0     0 ?        S    03:06   0:17 [ksoftirqd/0]
+root          5  0.0  0.0      0     0 ?        S<   03:06   0:00 [kworker/0:0H]
+root          7  0.0  0.0      0     0 ?        S    03:06   0:00 [migration/0]
+root          8  0.0  0.0      0     0 ?        S    03:06   0:00 [rcu_bh]
+...
+
+>>>结合管道（|）过滤（grep）查看 init 进程 2条
+[xfk@centos ~]$ ps aux | grep init
+root       6539  0.0  0.0  16892   552 ?        SNs  03:06   0:00 /usr/sbin/alsactl -s -n 19 -c -E ALSA_CONFIG_PATH=/etc/alsa/alsactl.conf --initfile=/lib/alsa/init/00main rdaemon
+xfk      117642  0.0  0.0 112728   984 pts/0    R+   16:12   0:00 grep --color=auto init
+```
+
+###### 2）kill 终止进程
+
+`kill [-signal] pid`   
+信号值0-15，其中9为绝对终止，可以处理一般信号无法终止的进程
+
+```
+[xfk@centos ~]$ ps -a
+   PID TTY          TIME CMD
+100160 pts/1    00:00:03 top
+129300 pts/0    00:00:00 ps
+[xfk@centos ~]$ kill -9 100160
+[xfk@centos ~]$ ps -a
+   PID TTY          TIME CMD
+   511 pts/0    00:00:00 ps
+```
+
+###### 3）reboot、shutdown、init 关机重启
+
+| 命令              | 含义                                   |
+| ----------------- | -------------------------------------- |
+| reboot / init 6   | 重启操作系统                           |
+| init 0            | 关机                                   |
+| shutdown -r now   | 重启操作系统，shutdown会给别的用户提示 |
+| shutdown -h now   | 立刻关机                               |
+| shutdown -h 20:25 | 今天20:25关机                          |
+| shutdown -h +10   | 10分钟后关机                           |
+
+###### 4）ifconfig 查看或配置网卡信息
+
+```
+>>>查看所有网卡信息
+[xfk@centos ~]$ ifconfig
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.88.130  netmask 255.255.255.0  broadcast 192.168.88.255
+        inet6 fe80::adac:60a5:fce1:16b6  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:bd:fb:64  txqueuelen 1000  (Ethernet)
+        RX packets 801489  bytes 358600740 (341.9 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 1115642  bytes 318304975 (303.5 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 32  bytes 2592 (2.5 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 32  bytes 2592 (2.5 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+virbr0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 192.168.122.1  netmask 255.255.255.0  broadcast 192.168.122.255
+        ether 52:54:00:d2:42:17  txqueuelen 1000  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+```
+
+###### 5）ping 测试远程主机联通性
+
+```
+>>>终止Ctrl+c
+[xfk@centos ~]$ ping 192.168.3.2
+PING 192.168.3.2 (192.168.3.2) 56(84) bytes of data.
+64 bytes from 192.168.3.2: icmp_seq=1 ttl=128 time=0.749 ms
+64 bytes from 192.168.3.2: icmp_seq=2 ttl=128 time=0.687 ms
+64 bytes from 192.168.3.2: icmp_seq=3 ttl=128 time=2.79 ms
+64 bytes from 192.168.3.2: icmp_seq=4 ttl=128 time=0.754 ms
+64 bytes from 192.168.3.2: icmp_seq=5 ttl=128 time=1.10 ms
+64 bytes from 192.168.3.2: icmp_seq=6 ttl=128 time=0.595 ms
+^C
+--- 192.168.3.2 ping statistics ---
+6 packets transmitted, 6 received, 0% packet loss, time 5012ms
+rtt min/avg/max/mdev = 0.595/1.113/2.790/0.767 ms
+```
+
