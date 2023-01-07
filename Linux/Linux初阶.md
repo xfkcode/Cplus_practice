@@ -616,3 +616,30 @@ hello world
 | :set nonu    | 不显示行号                  |
 | :! linux命令 | vim中执行linux命令后返回vim |
 
+### 4. 远程操作:sunrise_over_mountains:
+
+##### 5.1 SSH
+
+**SSH** 是 Secure Shell 的缩写，建立在应用层和传输层基础上的安全协议。是目前较可靠，转为远程登录会话和其他网络服务提供安全性的协议。  
+**常用于远程登录，以及用户之间进行资料拷贝。** 
+
+```
+>>>远程登录(Linux—>Linux)
+[xfk@centos ~]$ ssh xfk@192.168.88.130
+The authenticity of host '192.168.88.130 (192.168.88.130)' can't be established.
+ECDSA key fingerprint is SHA256:hxGLVGRS6nbrms8Ds6+FipDakCoV7rxe64aWX5Bh7Xw.
+ECDSA key fingerprint is MD5:53:8c:67:4f:76:d1:f9:ff:3c:81:4b:3f:a4:3a:33:98.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.88.130' (ECDSA) to the list of known hosts.
+xfk@192.168.88.130's password: 
+Last login: Sat Jan  7 20:00:43 2023 from 192.168.88.1
+
+[xfk@centos ~]$ exit
+登出
+Connection to 192.168.88.130 closed.
+```
+
+
+
+✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
+📅 **写于2023年1月**✔️
