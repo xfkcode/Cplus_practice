@@ -272,7 +272,18 @@ aa
 | -i   | 提示用户是否删除 |
 | -f   | 强制删除         |
 
-
+```Linux
+[xfk@centos ~]$ rm -ri TESTDIR/
+rm：是否进入目录"TESTDIR/"? y
+rm：是否进入目录"TESTDIR/aa"? y
+rm：是否进入目录"TESTDIR/aa/bb"? y
+rm：是否删除目录 "TESTDIR/aa/bb/cc"？y
+rm：是否删除目录 "TESTDIR/aa/bb"？y
+rm：是否删除目录 "TESTDIR/aa"？y
+rm：是否删除目录 "TESTDIR/"？y
+[xfk@centos ~]$ ls TESTDIR
+ls: 无法访问TESTDIR: 没有那个文件或目录
+```
 
 #### 3.10 cp 命令
 
