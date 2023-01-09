@@ -287,7 +287,34 @@ ls: 无法访问TESTDIR: 没有那个文件或目录
 
 #### 3.10 cp 命令
 
+**复制文件/目录** 
 
+- 使用方法：
+
+  - `cp 源文件/目录 目标文件/目录`   
+
+  【:loudspeaker:】`cp file1 file2（不存在）` 拷贝新建文件  
+               `cp file1 file2（存在）` 覆盖  
+               `cp file dir(必须存在) `  
+               `cp -r dir1 dir2（不存在）` 拷贝新建目录以及内容文件  
+               `cp -r dir1 dir2（存在）` 创建拷贝子目录
+
+```Linux
+>>> 拷贝新文件
+[xfk@centos TESTDIR]$ touch test1.cpp
+[xfk@centos TESTDIR]$ cp test1.cpp test1.cpp.bak
+[xfk@centos TESTDIR]$ ls
+test1.cpp  test1.cpp.bak
+>>> 文件拷贝到目录
+[xfk@centos ~]$ touch aa.c
+[xfk@centos ~]$ cp aa.c ./TESTDIR_bak/
+[xfk@centos ~]$ ls TESTDIR_bak/
+aa.c
+>>> 目录拷贝到目录（子目录）
+[xfk@centos ~]$ cp -r TESTDIR TESTDIR_bak/
+[xfk@centos ~]$ ls ./TESTDIR_bak/
+aa.c  TESTDIR
+```
 
 #### 3.11 mv 命令
 
