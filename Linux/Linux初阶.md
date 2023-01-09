@@ -360,7 +360,7 @@ drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 | rwx（111） | 7    |
 
 ```
->>>421/u=4,g=2,o=1,所属者只读，所属组只写，其他用户只执行
+>>>421/u=r,g=w,o=x,所属者只读，所属组只写，其他用户只执行
 [xfk@centos ~]$ ls -ld Testdir
 drwx--xr-x. 3 xfk xfk 80 Jan  5 22:51 Testdir
 [xfk@centos ~]$ chmod 421 Testdir

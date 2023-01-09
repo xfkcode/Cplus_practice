@@ -442,7 +442,7 @@ lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 file.c.s -> /home/xfk/TESTDIR/file.c
 
 #### 3.18 硬链接
 
-**创建硬链接（ 指向同一个 inode 互为硬链接）** 
+**创建硬链接（ 指向同一个 inode 互为硬链接，不可跨文件系统）** 
 
 - 使用方法：
 
@@ -463,8 +463,106 @@ lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 file.c.s -> /home/xfk/TESTDIR/file.c
 102680740 lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 file.c.s -> /home/xfk/TESTDIR/file.c
 ```
 
-#### 3.19 wc
+#### 3.19 wc 命令
 
+**显示文件行数，单词数，字节数** 
 
+- 使用方法：
+  - `wc 文件`
 
-#### 3.20 whoami
+- 相关选项
+
+| 选项 | 含义             |
+| ---- | ---------------- |
+| -l   | 显示文件总行数   |
+| -w   | 显示文件总单词数 |
+| -c   | 显示文件总字节数 |
+
+```Linux
+>>>
+[xfk@centos TESTDIR]$ wc file.c
+10 15 96 file.c
+[xfk@centos TESTDIR]$ wc -l file.c
+10 file.c
+[xfk@centos TESTDIR]$ wc -w file.c
+15 file.c
+[xfk@centos TESTDIR]$ wc -c file.c
+96 file.c
+```
+
+#### 3.20 whoami 命令
+
+**显示当前登录的用户名** 
+
+- 使用方法：
+  - `whoami` 
+
+```Linux
+>>>
+[xfk@centos TESTDIR]$ whoami
+xfk
+[xfk@centos TESTDIR]$ echo $USER
+xfk
+```
+
+## 4. 用户权限、用户、用户组
+
+#### 4.1 修改文件权限 chmod
+
+- 文字设定
+  - `chmod [who][+|-|=][mode],... 文件` 
+    - 操作对象【who】  
+      `u` 用户 `g` 同组用户 `o` 其他用户 `a` 所有用户（默认）
+    - 操作符【+-=】  
+      `+` 添加权限 `-` 撤销权限 `=` 赋予制定权限撤销其他权限
+    - 权限【mode】  
+      `r` 只读 `w` 只写 `x` 只执行
+
+```Linux
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rw-rw-r--. 1 xfk xfk 0 1月   9 20:36 function.c
+>>>
+[xfk@centos TESTDIR]$ chmod u+x,o+w function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rwxrw-rw-. 1 xfk xfk 0 1月   9 20:36 function.c
+>>>
+[xfk@centos TESTDIR]$ chmod go-w function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rwxr--r--. 1 xfk xfk 0 1月   9 20:36 function.c
+>>>
+[xfk@centos TESTDIR]$ chmod go=rx function.c
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rwxr-xr-x. 1 xfk xfk 0 1月   9 20:36 function.c
+```
+
+- 数字设定
+
+  - `chmod [+|-|=][数字],... 文件` 
+    - 操作符【+-=】  
+      `+` 添加权限 `-` 撤销权限 `=` 赋予制定权限撤销其他权限（默认）
+    - 数字含义  
+      `0` 无权限 `1` 执行权限 `2` 写权限 `4` 读权限
+
+  【:loudspeaker:】一位数字o，两位数字go ，三位数字ugo
+
+```Linux
+>>>
+[xfk@centos TESTDIR]$ chmod 766 function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rwxrw-rw-. 1 xfk xfk 0 1月   9 20:36 function.c
+>>>
+[xfk@centos TESTDIR]$ chmod +111 function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-rwxrwxrwx. 1 xfk xfk 0 1月   9 20:36 function.c
+>>>
+[xfk@centos TESTDIR]$ chmod 555 function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-r-xr-xr-x. 1 xfk xfk 0 1月   9 20:36 function.c
+>>> 
+[xfk@centos TESTDIR]$ chmod +2 function.c 
+[xfk@centos TESTDIR]$ ls -l function.c 
+-r-xr-xrwx. 1 xfk xfk 0 1月   9 20:36 function.c
+```
+
+#### 4.2 修改文件所有者和所属组
+
