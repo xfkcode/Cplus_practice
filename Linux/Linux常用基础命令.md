@@ -231,7 +231,31 @@ TESTDIR/aa/bb/cc:
 
 #### 3.8 rmdir 命令
 
+**删除空目录（只能删除空目录）** 
 
+- 使用方法：
+  - `rmdir 目录名` 
+
+```Linux
+[xfk@centos TESTDIR]$ rmdir aa
+rmdir: 删除 "aa" 失败: 目录非空
+[xfk@centos TESTDIR]$ mkdir bb
+[xfk@centos TESTDIR]$ ls -R 
+.:
+aa  bb
+./aa:
+bb
+./aa/bb:
+cc
+./aa/bb/cc:
+
+./bb:
+
+[xfk@centos TESTDIR]$ rmdir bb
+[xfk@centos TESTDIR]$ rmdir bb
+[xfk@centos TESTDIR]$ ls
+aa
+```
 
 #### 3.9 rm 命令
 
