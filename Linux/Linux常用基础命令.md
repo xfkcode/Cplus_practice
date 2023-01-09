@@ -351,3 +351,91 @@ func.c  test1.cpp  test1.cpp.bak
 function.c  test1.cpp  test1.cpp.bak
 ```
 
+#### 3.12 cat 命令
+
+**将文件内容一次性输出到终端** 
+
+- 使用方法：
+
+  -  `cat 文件` 
+
+  【:loudspeaker:】文件重定向 `cat file1 > file2` 相当于 `cp file1 file2` 
+
+```Linux
+>>> 显示文件内容
+[xfk@centos TESTDIR]$ cat file.c 
+#include <tsdio.h>
+void print()
+{
+        printf("hello world");
+}
+int main()
+{
+        print();
+        return o;
+}
+>>> cat+> 实现拷贝
+[xfk@centos TESTDIR]$ cat file.c > print.c
+[xfk@centos TESTDIR]$ ls
+file.c  function.c  print.c  test1.cpp  test1.cpp.bak
+```
+
+#### 3.13 more 命令
+
+**分页显示文件内容到终端，只能向下浏览，不能回退** 
+
+- 使用方法：
+  - `more 文件`   
+    显示下一行 `回车`   
+    显示下一页 `空格`   
+    退出 `q` `Ctrl+c`
+
+#### 3.14 less 命令
+
+**分页显示文件内容到终端，可以自由上下浏览** 
+
+- 使用方法：
+  - `less 文件`  
+    显示下一行 `Ctrl+p` :arrow_down_small: `回车`  
+    显示上一行 `Ctrl+n` :arrow_up_small:   
+    显示下一页 `PageDown` `空格`  
+    显示上一页 `PageUp`  
+    退出 `q` `Ctrl+c` 
+
+#### 3.15 head 命令
+
+**从文件头部开始查看前n行内容** 
+
+- 使用方法：
+  - `head [-n] 文件 `   
+     如果没有指定行数，默认10行
+
+#### 3.16 tail 命令
+
+**从文件尾部开始查看后n行内容** 
+
+- 使用方法：
+
+  - `tail [-n] 文件 `   
+     如果没有指定行数，默认10行
+
+  【:loudspeaker:】监视日志 `tail -f test.log`   
+               一个终端 `tail -f test.log` 另一个终端 `echo "hello world" >> test.log)` （重定向`>>`追加）
+
+#### 3.17 ln 命令
+
+**创建软链接（类似于Windows的快捷方式）** 
+
+- 使用方法;
+
+  - `ln -s 文件/目录 软链接名` 
+
+  【:loudspeaker:】创建软链接用绝对路径，否则移动链接文件后，就找不到指向文件  
+               软链接文件大小：路径+文件名的总字节数
+
+```Linux
+[xfk@centos TESTDIR]$ ln -s file.c /home/xfk/TESTDIR/file.c.s
+[xfk@centos TESTDIR]$ ls -l file.c.s 
+lrwxrwxrwx. 1 xfk xfk 6 1月  10 00:18 file.c.s -> file.c
+```
+
