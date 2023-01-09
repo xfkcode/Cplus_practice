@@ -156,25 +156,78 @@ cd
 cd ~
 cd /home/xfk
 cd $HOME
-切换至上一个目录
+切换至上一个工作目录
 cd - 
 ```
 
 #### 3.4 pwd 命令
 
+**查看当前所处工作目录** 
 
+- 使用方法：
+  - `pwd` （print working directory）
+
+```Linux
+[xfk@centos ~]$ pwd
+/home/xfk
+```
 
 #### 3.5 which 命令
 
+**显示命令所在的目录** 
 
+- 使用方法：
+  - `which 命令` 
+
+```Linux
+[xfk@centos ~]$ which cd
+/usr/bin/cd
+```
 
 #### 3.6 touch 命令
 
+**如果文件不存在，创建新文件，如果文件存在，更新文件的最后修改时间** 
 
+- 使用方法：
+  - `touch 文件名` 
+
+```Linux
+>>> 创建新文件
+[xfk@centos ~]$ touch func.c
+[xfk@centos ~]$ ls -l func.c 
+-rw-rw-r--. 1 xfk xfk 0 1月   9 20:35 func.c
+>>> 更新修改时间
+[xfk@centos ~]$ touch func.c
+[xfk@centos ~]$ ls -l func.c 
+-rw-rw-r--. 1 xfk xfk 0 1月   9 20:36 func.c
+```
 
 #### 3.7 mkdir 命令
 
+创建新目录 make directory
 
+- 使用方法：
+  - `mkdir 目录名` 当前目录下创建
+    `mkdir 路径/目录名` 指定目录下创建
+- 相关参数
+
+| 参数 | 含义         |
+| ---- | ------------ |
+| -p   | 创建多级目录 |
+
+```Linux
+>>> 创建多级目录
+[xfk@centos ~]$ mkdir -p ./TESTDIR/aa/bb/cc
+[xfk@centos ~]$ ls -R TESTDIR/
+TESTDIR/:
+aa
+TESTDIR/aa:
+bb
+TESTDIR/aa/bb:
+cc
+TESTDIR/aa/bb/cc:
+
+```
 
 #### 3.8 rmdir 命令
 
