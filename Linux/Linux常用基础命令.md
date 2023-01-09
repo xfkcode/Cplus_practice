@@ -128,6 +128,7 @@ Liunx系统结构：
 | -R   | 递归方式列出所有目录中的内容                                 |
 | -l   | 列出文件的详细信息                                           |
 | -ltr | 列出当前目录下的文件，按照时间逆向排序（**t**ime **r**everse） |
+| -i   | 可查看文件 **inode** 硬链接                                  |
 
 ```Linux
 [xfk@centos ~]$ ls -l
@@ -422,20 +423,48 @@ file.c  function.c  print.c  test1.cpp  test1.cpp.bak
   【:loudspeaker:】监视日志 `tail -f test.log`   
                一个终端 `tail -f test.log` 另一个终端 `echo "hello world" >> test.log)` （重定向`>>`追加）
 
-#### 3.17 ln 命令
+#### 3.17 软链接
 
 **创建软链接（类似于Windows的快捷方式）** 
 
-- 使用方法;
+- 使用方法：
 
   - `ln -s 文件/目录 软链接名` 
 
-  【:loudspeaker:】创建软链接用绝对路径，否则移动链接文件后，就找不到指向文件  
+  【:loudspeaker:】创建软链接源文件用绝对路径，否则移动链接文件后，就找不到指向文件（移动源文件失效）  
                软链接文件大小：路径+文件名的总字节数
 
 ```Linux
-[xfk@centos TESTDIR]$ ln -s file.c /home/xfk/TESTDIR/file.c.s
-[xfk@centos TESTDIR]$ ls -l file.c.s 
-lrwxrwxrwx. 1 xfk xfk 6 1月  10 00:18 file.c.s -> file.c
+[xfk@centos TESTDIR]$ ln -s /home/xfk/TESTDIR/file.c file.c.s
+[xfk@centos TESTDIR]$ ls -l file.c.s
+lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 file.c.s -> /home/xfk/TESTDIR/file.c
 ```
 
+#### 3.18 硬链接
+
+**创建硬链接（ 指向同一个 inode 互为硬链接）** 
+
+- 使用方法：
+
+  - `ln 文件（目录不可以） 硬链接名` 
+
+  【:loudspeaker:】作用：1.同步文件 2.保护文件  
+               创建硬链接计数+1，删除-1  
+               `stat 文件` `ls -i 文件` 可查看文件  inode
+
+```Linux
+>>> 创建硬链接
+[xfk@centos TESTDIR]$ ls -li file.c
+102680741 -rw-rw-r--. 1 xfk xfk 96 1月   9 23:34 file.c
+[xfk@centos TESTDIR]$ ln file.c file.c.h
+[xfk@centos TESTDIR]$ ls -li file*
+102680741 -rw-rw-r--. 2 xfk xfk 96 1月   9 23:34 file.c
+102680741 -rw-rw-r--. 2 xfk xfk 96 1月   9 23:34 file.c.h
+102680740 lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 file.c.s -> /home/xfk/TESTDIR/file.c
+```
+
+#### 3.19 wc
+
+
+
+#### 3.20 whoami
