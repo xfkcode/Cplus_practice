@@ -89,7 +89,7 @@ Liunx系统结构：
       				1️⃣ `/.../...` 
 - 相对路径：目标目录相对于当前目录的位置  
       		        1️⃣ `./` 当前目录  
-            		        2️⃣ `../` 上级目录
+                        		        2️⃣ `../` 上级目录
 
 - Linux命令提示符：`[xfk@centos ~]$` 
   - `xfk`：当前登录用户
@@ -543,7 +543,8 @@ xfk
     - 数字含义  
       `0` 无权限 `1` 执行权限 `2` 写权限 `4` 读权限
 
-  【:loudspeaker:】一位数字o，两位数字go ，三位数字ugo
+  【:loudspeaker:】一位数字o，两位数字go ，三位数字ugo  
+               规范使用三位8进制数
 
 ```Linux
 >>>
@@ -564,5 +565,149 @@ xfk
 -r-xr-xrwx. 1 xfk xfk 0 1月   9 20:36 function.c
 ```
 
-#### 4.2 修改文件所有者和所属组
+#### 4.2 修改文件所有者和所属组 chown
 
+**修改文件所有者/所属组** 
+
+- 使用方法：
+
+  - `chown 所有者 文件名`
+  - `chown [所有者]:所属组 文件名` （所有者不改可省略）
+
+  【:loudspeaker:】普通用户需要用管理员用户权限执行该命令 `sudo`   
+               `sudo adduser` 创建新用户
+
+```Linux
+>>>
+[xfk@centos TESTDIR]$ ls -l file.c
+-rw-rw-r--. 2 xfk xfk 96 1月   9 23:34 file.c
+[xfk@centos TESTDIR]$ sudo chown root file.c
+[xfk@centos TESTDIR]$ ls -l file.c
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 file.c
+>>> 
+[xfk@centos TESTDIR]$ sudo chown root:root file.c
+[xfk@centos TESTDIR]$ ls -l file.c
+-rw-rw-r--. 2 root root 96 1月   9 23:34 file.c
+```
+
+####  4.3 修改文件所属组 chgrp
+
+**修改文件所属组** 
+
+- 使用方法：
+  - `chown 所属组 文件名` 
+
+```Linux
+[xfk@centos TESTDIR]$ ls -l file.c
+-rw-rw-r--. 2 root root 96 1月   9 23:34 file.c
+[xfk@centos TESTDIR]$ sudo chgrp xfk file.c
+[xfk@centos TESTDIR]$ ls -l file.c
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 file.c
+```
+
+## 5. 查找、过滤
+
+#### 5.1 find 命令
+
+**查找文件/目录**  
+
+- 使用方法：
+  - `find 路径 [选项] [参数]` 
+
+- 相关选项
+
+| 选项                           | 含义                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
+| -name                          | 按文件名查找 ["文件名"]                                      |
+| -type                          | 按文件类型查找 [f/d/l/b/c/s/p]                               |
+| -size                          | 按文件大小查找 [+大于\|-小于\|=等于] 大小 [M\|k\|c字节]      |
+| -ctime<br />-mtime<br />-atime | 按文件创建日期 [-n/+n]<br />按文件修改日期 [-n/+n]<br />按文件访问日期 [-n/+n] |
+| -maxdepth<br />-mindepth       | 搜索n层以下的目录，搜索的层数不超过n层<br />搜索n层以上的目录，搜索的层数不小于n层 |
+
+```Linux
+[xfk@centos TESTDIR]$ find ./ -name "file*"
+./file.c.s
+./file.c
+./file.c.h
+[xfk@centos TESTDIR]$ find ./ -type l
+./file.c.s
+普通文件 f、目录文件 d、设备文件（字符设备文件 c、块设备文件 b）
+管道文件 p、软链接文件 l、套接字文件 s
+[xfk@centos TESTDIR]$ find ./ -size 24c
+./file.c.s
+[xfk@centos TESTDIR]$ find ./ -size +10c -size -50c
+./file.c.s
+区间需要写两次-size
+>>> 一天内创建文件
+[xfk@centos TESTDIR]$ find ./ -ctime -1
+./
+./test1.cpp
+./test1.cpp.bak
+区间写两次-ctime
+```
+
+- 高级查找
+
+  - `find 路径 [选项] [参数] -exec shell命令 {} \; `  
+    `find 路径 [选项] [参数] -ok shell命令 {} \; `   
+    - 查找当前目录下所有目录并列出文件详细信息  
+      `find ./ -type d -exec ls -l {} \;`   
+      `find ./ -type d -ok ls -l {} \;` 
+
+  【:loudspeaker:】 ok比较安全（提示），特别是在rm删除文件的时候
+
+  - `find 路径 [选项] [参数] | xargs shell命令`   
+    `find ./ -type d | xargs ls -l`
+
+```Linux
+>>>
+[xfk@centos TESTDIR]$ find ./ -name "file*" -exec ls -l {} \;
+lrwxrwxrwx. 1 xfk xfk 24 1月  10 00:40 ./file.c.s -> /home/xfk/TESTDIR/file.c
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 ./file.c
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 ./file.c.h
+>>> 
+[xfk@centos TESTDIR]$ find ./ -name "file*" | xargs ls -l
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 ./file.c
+-rw-rw-r--. 2 root xfk 96 1月   9 23:34 ./file.c.h
+lrwxrwxrwx. 1 xfk  xfk 24 1月  10 00:40 ./file.c.s -> /home/xfk/TESTDIR/file.c
+```
+
+#### 5.2 grep 命令
+
+**文本搜索** 
+
+- 使用方法：
+  - `grep [选项] "查找的内容" 路径`
+- 相关选项
+
+| 选项 | 含义                 |
+| ---- | -------------------- |
+| -r   | 目录递归搜索         |
+| -n   | 显示查找内容所在行号 |
+| -i   | 忽略大小写           |
+| -v   | 不显示含有某字符串   |
+
+```Linux
+[xfk@centos TESTDIR]$ grep -rin "include" ./
+./print.c:1:#include <tsdio.h>
+./file.c:1:#include <tsdio.h>
+./file.c.h:1:#include <tsdio.h>
+```
+
+【:loudspeaker:】find结合grep   
+             `find ./ -name "file*" | xargs grep -n "main"` 
+
+```Linux
+[xfk@centos TESTDIR]$ find ./ -name "file*" | xargs grep -n "main"
+./file.c.s:6:int main()
+./file.c:6:int main()
+./file.c.h:6:int main()
+```
+
+## 6. 软件安装和卸载
+
+#### 6.1 在线安装
+
+
+
+#### 6.2 软件安装包
