@@ -112,6 +112,20 @@ Liunx系统结构：
 
   【:loudspeaker:】只能查看目录内容，不能查看文件内容
 
+```Linux
+[xfk@centos ~]$ tree TESTDIR
+TESTDIR
+├── file.c
+├── file.c.h
+├── file.c.s -> /home/xfk/TESTDIR/file.c
+├── function.c
+├── print.c
+├── test1.cpp
+└── test1.cpp.bak
+
+0 directories, 7 files
+```
+
 #### 3.2 ls 命令
 
 **查看指定目录下的文件信息**
@@ -707,6 +721,98 @@ lrwxrwxrwx. 1 xfk  xfk 24 1月  10 00:40 ./file.c.s -> /home/xfk/TESTDIR/file.c
 #### 5.3 压缩工具
 
 - **gzip **和 **bzip2** 
+
+【:loudspeaker:】不能压缩目录，只能一个一个文件进行压缩，压缩之后会使源文件消失
+
+| 命令      | 含义                       |
+| --------- | -------------------------- |
+| gzip *    | 压缩当前目录下所有文件     |
+| gunzip *  | 解压当前目录下所有.gz文件  |
+| bzip2 *   | 压缩当前目录下所有文件     |
+| bunzip2 * | 解压当前目录下所有.bz2文件 |
+
+```Linux
+[xfk@centos TESTDIR]$ ls -l
+-r-xrwxrwx. 1 xfk  xfk  0 1月   9 20:36 function.c
+-rw-rw-r--. 1 xfk  xfk 96 1月   9 23:35 print.c
+-rw-rw-r--. 1 xfk  xfk  0 1月   9 21:18 test1.cpp
+-rw-rw-r--. 1 xfk  xfk  0 1月   9 21:30 test1.cpp.bak
+[xfk@centos TESTDIR]$ gzip *
+[xfk@centos TESTDIR]$ ls -l
+-r-xrwxrwx. 1 xfk  xfk  31 1月   9 20:36 function.c.gz
+-rw-rw-r--. 1 xfk  xfk 107 1月   9 23:35 print.c.gz
+-rw-rw-r--. 1 xfk  xfk  34 1月   9 21:30 test1.cpp.bak.gz
+-rw-rw-r--. 1 xfk  xfk  30 1月   9 21:18 test1.cpp.gz
+```
+
+- **tar** 
+
+| 选项 | 含义                      |
+| ---- | ------------------------- |
+| z    | 用gzip来压缩/解压文件     |
+| j    | 用bzip2来压缩/解压文件    |
+| c    | 创建新的压缩文件，与x互斥 |
+| x    | 解压压缩文件，与c互斥     |
+| v    | 详细报告tar处理的文件信息 |
+| f    | 指定压缩文件的名字        |
+| t    | 查看压缩包中有哪些文件    |
+
+1. 压缩方法：
+   - `tar cvf xxx.tar 原材料[要打包压缩的文件或目录]`  
+     `tar zcvf xxx.tar.gz 原材料[要打包压缩的文件或目录]`  
+     `tar jcvf xxx.tar.bz2 原材料[要打包压缩的文件或目录]`  
+
+2. 解压缩方法：
+   - `tar xvf  压缩包` （xxx.tar）  
+     `tar zxvf  压缩包` （xxx.tar.gz）  
+     `tar jxvf  压缩包` （xxx.tar.bz2）   
+     解压到指定目录：添加参数 `-C 目录（必须存在）` （默认当前目录）
+
+3. 查看压缩包内文件 `tar tvf 压缩包`
+
+```Linux
+>>> 压缩
+[xfk@centos TESTDIR]$ tar zcvf mytar.tar.gz print.c.gz function.c.gz 
+print.c.gz
+function.c.gz
+[xfk@centos TESTDIR]$ ls
+file.c  file.c.h  file.c.s  function.c.gz  mytar.tar.gz  print.c.gz  test1.cpp.bak.gz  test1.cpp.gz
+>>> 查看
+[xfk@centos TESTDIR]$ tar tvf mytar.tar.gz 
+-rw-rw-r-- xfk/xfk         107 2023-01-09 23:35 print.c.gz
+-r-xrwxrwx xfk/xfk          31 2023-01-09 20:36 function.c.gz
+>>> 解压
+[xfk@centos TESTDIR]$ tar zxvf mytar.tar.gz -C ../MYTAR
+print.c.gz
+function.c.gz
+[xfk@centos TESTDIR]$ ls -l ../MYTAR
+总用量 8
+-r-xrwxr-x. 1 xfk xfk  31 1月   9 20:36 function.c.gz
+-rw-rw-r--. 1 xfk xfk 107 1月   9 23:35 print.c.gz
+```
+
+- zip
+  1. 压缩 `zip [-r] 压缩包名 要压缩的文件（含文件和目录）`   
+     生成 `xxx.zip` 文件
+  2. 解压 `unzip 压缩包 [-d 解压目录（不存在创建）]`
+
+```Linux
+>>> 压缩
+[xfk@centos TESTDIR]$ zip xxx aa.c bb.c 
+  adding: aa.c (stored 0%)
+  adding: bb.c (stored 0%)
+[xfk@centos TESTDIR]$ ls -l xxx.zip 
+-rw-rw-r--. 1 xfk xfk 294 1月  11 01:03 xxx.zip
+>>> 解压
+[xfk@centos TESTDIR]$ unzip xxx.zip -d ./ZIP
+Archive:  xxx.zip
+ extracting: ./ZIP/aa.c              
+ extracting: ./ZIP/bb.c
+[xfk@centos TESTDIR]$ ls -ld ZIP
+drwxrwxr-x. 2 xfk xfk 30 1月  11 01:05 ZIP
+```
+
+
 
 ## 6. 软件安装和卸载
 
