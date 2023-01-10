@@ -605,7 +605,7 @@ xfk
 -rw-rw-r--. 2 root xfk 96 1月   9 23:34 file.c
 ```
 
-## 5. 查找、过滤
+## 5. 查找、过滤、压缩
 
 #### 5.1 find 命令
 
@@ -704,10 +704,21 @@ lrwxrwxrwx. 1 xfk  xfk 24 1月  10 00:40 ./file.c.s -> /home/xfk/TESTDIR/file.c
 ./file.c.h:6:int main()
 ```
 
+#### 5.3 压缩工具
+
+- **gzip **和 **bzip2** 
+
 ## 6. 软件安装和卸载
 
 #### 6.1 在线安装
 
-
+- Centos
+  - yum：rpm包软件管理器，用于自动化安装配置Linux软件，并可以自动解决依赖问题
+    - 语法：`yum [-y] [install|remove|search] 软件名`
+    - 选项：-y，自动确认
+    - install安装，remove卸载，search搜索
+- Ubuntu
+  - apt：deb包
+  - 语法：`apt [-y] [install|remove|search] 软件名`
 
 #### 6.2 软件安装包
