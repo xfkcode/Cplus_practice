@@ -326,6 +326,7 @@ hello world
 └── main.c
 
 0 directories, 7 files
+>>> 
 [xfk@centos SLib]$ gcc -o main main.c -I./ -L./ -ltest1
 [xfk@centos SLib]$ ls
 func1.c  func1.o  func2.c  func2.o  head.h  libtest1.a  main  main.c
@@ -355,6 +356,7 @@ func2
 └── main.c
 
 2 directories, 8 files
+>>>
 [xfk@centos SLib]$ gcc -o main main.c -I./include -L./lib -ltest1
 [xfk@centos SLib]$ ls
 func1.c  func1.o  func2.c  func2.o  include  lib  main  main.c
@@ -366,6 +368,167 @@ func2
 ```
 
 #### 3.3 共享库（shared library）`.so` 
+
+共享库在程序编译时不会被连接到目标代码中，而是在程序运行时才被载入；  
+不同的应用程序如果调用相同的库，那么在内存里只需要一份该共享库的拷贝，规避了空间的浪费。
+
+共享库命名：`libxxx.so` 
+
+###### 3.3.1 共享库的制作
+
+`func1.c` `func2.c` `head.h` 
+
+步骤：
+
+1. 生成目标文件 `.o` ,此时要加编译选项：`-fpic`  
+   创建与地址无关的编译程序（pic，position independent code），目的就是为了能够在多个应用程序间共享
+
+   `gcc -fpic -c func1.c func2.c` 
+
+2. 生成共享库，此时要加链接器选项：`-shared`   
+   指定生成动态链接库
+
+   `gcc -shared func1.o func2.o -o libtest2.so` 
+
+```Linux
+>>>
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func2.c
+└── head.h
+
+0 directories, 3 files
+>>> 步骤1
+[xfk@centos SLib]$ gcc -fpic -c func1.c func2.c
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+└── head.h
+
+0 directories, 5 files
+>>> 步骤2
+[xfk@centos SLib]$ gcc -shared func1.o func2.o -o libtest2.so
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── head.h
+└── libtest2.so
+
+0 directories, 6 files
+```
+
+###### 3.3.2 共享库的使用
+
+`gcc -o main main.c -I头文件路径 -L库文件路径 -l库名（去除lib和.so）` 
+
+1. `main.c` `head.h` `libtest2.so` 在同级目录的情况
+
+   `gcc -o main main.c -I./ -L./ -ltest2` 
+
+```Linux
+>>> 在main.c中调用func1、func2（使用静态库1）
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── head.h
+├── libtest2.so
+└── main.c
+
+0 directories, 7 files
+>>> 
+[xfk@centos SLib]$ gcc -o main main.c -I./ -L./ -ltest2
+[xfk@centos SLib]$ ls
+func1.c  func1.o  func2.c  func2.o  head.h  libtest2.so  main  main.c
+>>> 
+[xfk@centos SLib]$ ./main 
+./main: error while loading shared libraries: libtest2.so: cannot open shared object file: No such file or directory
+```
+
+2. `main.c` `head.h` `libtest2.so` 不在同级目录的情况
+
+   `gcc -o main main.c -I./include -L./lib -ltest2` 
+
+```Linux
+>>> 在main.c中调用func1、func2（使用静态库2）
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── include
+│   └── head.h
+├── lib
+│   └── libtest2.so
+└── main.c
+
+2 directories, 8 files
+>>>
+[xfk@centos SLib]$ gcc -o main main.c -I./include -L./lib -ltest2
+[xfk@centos SLib]$ ls
+func1.c  func1.o  func2.c  func2.o  include  lib  main  main.c
+>>> 
+[xfk@centos SLib]$ ./main 
+./main: error while loading shared libraries: libtest2.so: cannot open shared object file: No such file or directory
+```
+
+【:warning:】执行程序报错：  
+`./main: error while loading shared libraries: libtest2.so: cannot open shared object file: No such file or directory`    
+**找不到 libtest2.so** :exclamation: :exclamation: :exclamation: 
+
+```Linux
+[xfk@centos SLib]$ ldd main
+        linux-vdso.so.1 =>  (0x00007ffdeeff8000)
+        libtest2.so => not found
+        libc.so.6 => /lib64/libc.so.6 (0x00007f32617c2000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f3261b8f000)
+```
+
+【:question:】 原因：
+
+- 当系统加载可执行文件代码时，能够知道其所依赖的库的名字  
+  **但是还需要知道所依赖的库的绝对路径**，此时就需要系统动态载入器（dynamic linker/loader）
+- 对于ELF格式的可执行程序，是由 `ld-linux.so*` 来完成的，它先后搜索ELF文件  
+  `DT_RPATH段` >>> `LD_LIBRARY_PATH环境变量` >>> `/etc/ld.so.cache文件列表` >>> `/lib,/user/lib 目录` 
+
+```Linux
+[xfk@centos SLib]$ file main
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=a6e3938ae6eb4ad589bbc24c5e37c9296b386c0d, not stripped
+```
+
+【:heavy_check_mark:】 解决：
+
+- 拷贝自己制作的共享库到 `/lib` 或 `/user/lib`目录（不建议）
+
+- 临时设置 `LD_LIBRARY_PATH` ：
+  - 执行 `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:库路径` 命令（测试临时生效）
+- 永久设置  
+  把 `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:库路径` 设置到 `/etc/profile` 文件中（不建议）
+- 永久设置  
+  把 `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:库路径` 设置到 `~/.bashrc` 文件中，然后执行一下方法之一：
+  - 执行 `. ~/.bashrc` 使配置文件生效（第一个 `.` 后有一个空格）
+  - 执行 `source ~/.bashrc` 使配置文件生效
+  - 退出当前终端，然后再次登录使配置文件生效
+
+```Linux
+>>> export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/lib
+[xfk@centos SLib]$ echo $LD_LIBRARY_PATH
+:/home/xfk/lib
+[xfk@centos SLib]$ ./main
+main
+func1
+func2
+```
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
