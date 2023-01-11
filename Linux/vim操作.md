@@ -217,7 +217,155 @@ hello world
 
 #### 2.2 gcc常用参数
 
+| 参数        | 含义                                              |
+| ----------- | ------------------------------------------------- |
+| `-v`        | 查看gcc版本号                                     |
+| `-E`        | 生成预处理文件                                    |
+| `-S`        | 生成汇编文件                                      |
+| `-c`        | 只编译，生成`.o`文件（目标文件）                  |
+| `-I`        | 指定头文件所在的路径                              |
+| `-L`        | 指定库文件所在的路径                              |
+| `-l`        | 指定库的名字                                      |
+| `-o`        | 指定生成的目标文件的名字                          |
+| `-g`        | 包含调试信息，使用`gdb`调试需要添加`-g`参数       |
+| `-On n=0~3` | 编译优化，n越大优化的越多                         |
+| `-Wall`     | 提示更多警告<br />`gcc -o test -Wall test.c`      |
+| `-D`        | 编译时定义宏<br />`gcc -o test test.c -D MAX=100` |
 
+## 3. 静态库和共享（动态）库
+
+#### 3.1 库的介绍
+
+**库** 是二进制文件，是源代码文件的另一种表现形式，是加了密的源代码；是一些功能相近或者是相似的函数的集合体
+
+- 提高代码的可重用性，而且还可以提高代码的健壮性
+- 可以减少开发者的代码开发量，缩短开发周期
+
+头文件：包含了库函数的声明
+
+库文件：包含了库函数的代码实现
+
+【:loudspeaker:】库不能单独使用，只能作为其他执行程序的一部分完成某些功能，也就是说只能被其他程序调用才能使用
+
+#### 3.2 静态库（static library）`.a` 
+
+静态库可以认为是一些目标代码的集合，是在可执行程序运行前就已经加入到执行码中，称为执行程序的一部分
+
+静态库命名：`libxxx.a` 
+
+###### 3.2.1 静态库的制作
+
+`func1.c` `func2.c` `head.h` 
+
+步骤：
+
+1. 将 c源文件 生成对应的 `.o`文件
+
+   `gcc -c func1.c func2.c`  
+   `gcc -c func1 -o func1.o` & `gcc -c func2.c -o func2.o` 
+
+2.  使用打包工具 `ar` 将准备好的  `.o`文件 打包为 `.a`文件
+
+   - 在使用 `ar` 工具时需要添加参数 **rcs**  
+     `r` 更新、`c` 创建、`s` 建立索引
+   - 命令：`ar rcs 静态库名 .o文件`  
+     `ar rcs libtest1.a func1.o func2.o` 
+
+```Linux
+>>> 
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func2.c
+└── head.h
+
+0 directories, 3 files
+>>> 步骤1
+[xfk@centos SLib]$ gcc -c func1.c func2.c
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+└── head.h
+
+0 directories, 5 files
+>>> 步骤2
+[xfk@centos SLib]$ ar rcs libtest1.a func1.o func2.o
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── head.h
+└── libtest1.a
+
+0 directories, 6 files
+```
+
+###### 3.2.2 静态库的使用
+
+`gcc -o main main.c -I头文件路径 -L库文件路径 -l库名（去除lib和.a）` 
+
+1. `main.c` `head.h` `libtest1.a` 在同级目录的情况
+
+   `gcc -o main main.c -I./ -L./ -ltest1` 
+
+```Linux
+>>> 在main.c中调用func1、func2（使用静态库1）
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── head.h
+├── libtest1.a
+└── main.c
+
+0 directories, 7 files
+[xfk@centos SLib]$ gcc -o main main.c -I./ -L./ -ltest1
+[xfk@centos SLib]$ ls
+func1.c  func1.o  func2.c  func2.o  head.h  libtest1.a  main  main.c
+>>> 
+[xfk@centos SLib]$ ./main
+main
+func1
+func2
+```
+
+2. `main.c` `head.h` `libtest1.a` 不在同级目录的情况
+
+   `gcc -o main main.c -I./include -L./lib -ltest1` 
+
+```Linux
+>>> 在main.c中调用func1、func2（使用静态库2）
+[xfk@centos SLib]$ tree
+.
+├── func1.c
+├── func1.o
+├── func2.c
+├── func2.o
+├── include
+│   └── head.h
+├── lib
+│   └── libtest1.a
+└── main.c
+
+2 directories, 8 files
+[xfk@centos SLib]$ gcc -o main main.c -I./include -L./lib -ltest1
+[xfk@centos SLib]$ ls
+func1.c  func1.o  func2.c  func2.o  include  lib  main  main.c
+>>> 
+[xfk@centos SLib]$ ./main 
+main
+func1
+func2
+```
+
+#### 3.3 共享库（shared library）`.so` 
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
