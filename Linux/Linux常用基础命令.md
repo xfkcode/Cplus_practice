@@ -1,6 +1,6 @@
-# Linux常用基础命令:kick_scooter:
+# Linux常用基础命令:kick_scooter: 
 
-## 命令解析器:rotating_light:
+## 命令解析器:rotating_light: 
 
 - shell 命令解析器
 - 作用：对用户输入到终端的命令解析成内核能够识别的指令，调用对应的执行程序
@@ -32,7 +32,7 @@ Liunx系统结构：
 /bin/csh
 ```
 
-## 1. Linux常用快捷键:bookmark_tabs:
+## 1. Linux常用快捷键:bookmark_tabs: 
 
 #### 1.1 tab 键
 
@@ -59,7 +59,7 @@ Liunx系统结构：
   - 删除光标前所有字符：`Ctrl+u` 
   - 删除光标后所有字符：`Ctrl+k `  
 
-## 2. Linux目录结构:cactus:
+## 2. Linux目录结构:cactus: 
 
 **Linux系统的目录结构是一个倒立的树状结构**（根目录 `/`） 
 
@@ -98,7 +98,7 @@ Liunx系统结构：
   - `~`：当前工作目录（家目录）
   - `$/#`：命令提示符（普通用户/超级用户）
 
-## 3. 文件和目录相关的命令:pager:
+## 3. 文件和目录相关的命令:pager: 
 
 #### 3.1 tree 命令
 
@@ -519,7 +519,7 @@ xfk
 xfk
 ```
 
-## 4. 用户权限、用户、用户组:alien:
+## 4. 用户权限、用户、用户组:alien: 
 
 #### 4.1 修改文件权限 chmod
 
@@ -619,7 +619,7 @@ xfk
 -rw-rw-r--. 2 root xfk 96 1月   9 23:34 file.c
 ```
 
-## 5. 查找、过滤、压缩:postbox:
+## 5. 查找、过滤、压缩:postbox: 
 
 #### 5.1 find 命令
 
@@ -812,7 +812,7 @@ Archive:  xxx.zip
 drwxrwxr-x. 2 xfk xfk 30 1月  11 01:05 ZIP
 ```
 
-## 6. 软件安装和卸载:computer:
+## 6. 软件安装和卸载:computer: 
 
 #### 6.1 在线安装
 
