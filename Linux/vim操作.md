@@ -176,6 +176,47 @@ vim 有输入和命令 **3** 种工作模式：
 
 #### 2.1 gcc工作流程
 
+hello.c【源文件】 :one:>>> hello.i【c文件】 :two:>>> hello.s【汇编文件】 :three:>>> hello.o【二进制文件】 :four:>>> a.out【可执行文件】
+
+:one: 预处理（cpp）`gcc -E xxx.c -o xxx.i`   
+**头文件展开，宏替换，去掉注释**
+
+:two: 编译器（gcc）`gcc -S xxx.i -o xxx.s`  
+**c文件变成汇编文件**
+
+:three: 汇编器（as） `gcc -c xxx.s -o xxx.o`  
+**汇编文件变成二进制文件**
+
+:four: 链接器（ld）`gcc xxx.o -o xxx`  
+**将函数库中相应的代码组合到目标文件中**
+
+【:loudspeaker:】四合一 `gcc -o xxx xxx.c` 
+
+```Linux
+>>> 预处理
+[xfk@centos TESTDIR]$ gcc -E file.c -o file.i
+[xfk@centos TESTDIR]$ ls -l file.i
+-rw-rw-r--. 1 xfk xfk 16888 1月  11 21:29 file.i
+>>> 编译
+[xfk@centos TESTDIR]$ gcc -S file.i -o file.s
+[xfk@centos TESTDIR]$ ls -l file.s
+-rw-rw-r--. 1 xfk xfk 735 1月  11 21:35 file.s
+>>> 汇编
+[xfk@centos TESTDIR]$ gcc -c file.s -o file.o
+[xfk@centos TESTDIR]$ ls -l file.o
+-rw-rw-r--. 1 xfk xfk 1632 1月  11 21:38 file.o
+>>> 链接
+[xfk@centos TESTDIR]$ gcc file.o -o file
+[xfk@centos TESTDIR]$ ./file 
+hello world
+>>> 四合一
+[xfk@centos TESTDIR]$ gcc -o file file.c
+[xfk@centos TESTDIR]$ ./file
+hello world
+```
+
+#### 2.2 gcc常用参数
+
 
 
 ---
