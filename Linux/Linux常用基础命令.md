@@ -720,7 +720,7 @@ lrwxrwxrwx. 1 xfk  xfk 24 1月  10 00:40 ./file.c.s -> /home/xfk/TESTDIR/file.c
 
 #### 5.3 压缩工具
 
-- **gzip **和 **bzip2** 
+- **gzip** 和 **bzip2** 
 
 【:loudspeaker:】不能压缩目录，只能一个一个文件进行压缩，压缩之后会使源文件消失
 
