@@ -201,19 +201,101 @@ makefile文件：（版本6）
 
 ### 2.1 gdb介绍
 
-GDB（GNU Debugger）
+GDB（GNU Debugger）是GCC的调试工具。  
+GDB主要有一下四个方面的功能：
+
+1. 启动程序，可以按照你的自定义的要求随心所欲的运行程序
+2. 可让被调试的程序在你所指定的断点处停住（断点可以是条件表达式）
+3. 当程序被停住时，可以检查此时你的程序中所发生的事
+4. 动态的改变你程序的执行环境
 
 ### 2.2 生成调试信息
 
+一般来说GDB主要调试的是C/C++的程序。  
+要调试C/C++的程序，首先在编译时，我们必须要把调试信息加到可执行文件中。
 
+- 编译器（cc/gcc/g++）参数 `-g` 用来生成调试信息  
+  `gcc -g hello.c -o hello` （单个文件）  
+
+```Linux
+makefile 文件
+1 target=main
+2 src=$(wildcard *.c)
+3 objects=$(patsubst %.c,%.o,$(src))
+4 CC=gcc
+5 CPPFLAGS=-I./
+6 $(target):$(objects)
+7     $(CC) -o $@ $^
+8 %.o:%.c
+9     $(CC) -c $< $(CPPFLAGS) -g		#源文件编译步骤加入-g
+10 .PHONY:clean
+11 clean:
+12     rm -f $(objects) $(target)
+```
 
 ### 2.3 启动gdb
 
-
+- 启动gdb：`gdb program` 
+- 退出gdb：`quit` 
+- 设置运行参数
+  - `set args` 可指定运行时参数
+  - `show args` 可查看设置好的运行参数
+- 启动程序
+  - `run ` 程序开始执行，如果又断点，停在第一个断点处
+  - `start` 程序向下执行一行，在
 
 ### 2.4 显示源代码
 
+- `list(简写l)` 显示源代码
 
+| 命令                 | 操作                                     |
+| -------------------- | ---------------------------------------- |
+| `list linenum `      | 显示第linenum行的上下文内容              |
+| `list function`      | 显示函数名为function的函数源程序         |
+| `list`               | 显示当前行                               |
+| `list -`             | 显示当前文件开始处的源程序               |
+| `list file:linenum`  | 显示file文件下的第n行                    |
+| `list file:function` | 显示file文件函数名为function的函数源程序 |
+
+【:loudspeaker:】默认显示10行  
+             更改默认值 `set listsize num`，查看默认值 `show listsize`   
+
+### 2.5 设置断点
+
+- `break(简写b)` 设置断点 
+
+| 命令                | 操作                             |
+| ------------------- | -------------------------------- |
+| `b linenum`         | 在源程序第linenum行设置断点      |
+| `b func`            | 在func函数入口处设置断点         |
+| `b file:linenum`    | 在file文件第linenum行设置断点    |
+| `b file:func`       | 在file文件func函数入口处设置断点 |
+| `b ... if 判断条件` | 条件断点                         |
+
+【:loudspeaker:】`info break(简写i b)` 显示断点信息
+
+修改断点  
+`disable m n | m-n`   
+`enable m n | m-n` 
+
+删除断点  
+`delete m n | m-n` 
+
+### 2.6 调试代码
+
+- `run` 运行程序，可简写为r
+- `next` 单步跟踪，函数调用当做一条简单语句执行，可简写为n
+- `step` 单步跟踪，函数调用进入被调用函数体内，可简写为s
+- `finish` 退出进入的函数（如果出不去，看一下函数体中的循环中是否有断点，如果有删除或设置无效）
+- `until` 在一个循体内单步跟踪时，可运行程序直到退出循环体，可简写为u（如果出不去，看一下函数体中的循环中是否有断点，如果有删除或设置无效）
+- `contiue` 继续运行程序，可简写为c（若有断点，则跳到下一个断点）
+
+### 2.7 查看断点的值
+
+- 查看运行时变量的值  
+  `print 变量名`
+- 自动显示变量的值
+- 查看修改变量的值
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
