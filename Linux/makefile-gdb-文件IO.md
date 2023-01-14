@@ -218,7 +218,7 @@ GDB主要有一下四个方面的功能：
   `gcc -g hello.c -o hello` （单个文件）  
 
 ```Linux
-makefile 文件
+makefile 文件 (多文件编译)：
 1 target=main
 2 src=$(wildcard *.c)
 3 objects=$(patsubst %.c,%.o,$(src))
@@ -232,6 +232,8 @@ makefile 文件
 11 clean:
 12     rm -f $(objects) $(target)
 ```
+
+【:loudspeaker:】编译源文件时加 `-g` 
 
 ### 2.3 启动gdb
 
@@ -275,8 +277,8 @@ makefile 文件
 【:loudspeaker:】`info break(简写i b)` 显示断点信息
 
 修改断点  
-`disable m n | m-n`   
-`enable m n | m-n` 
+`disable m n | m-n`  无效   
+`enable m n | m-n`  有效
 
 删除断点  
 `delete m n | m-n` 
@@ -293,9 +295,20 @@ makefile 文件
 ### 2.7 查看断点的值
 
 - 查看运行时变量的值  
-  `print 变量名`
-- 自动显示变量的值
-- 查看修改变量的值
+  `print(简写p) 变量名`  
+  `ptype 变量名` 查看变量的类型
+- 自动显示变量的值  
+  `display 变量名`   
+  【:loudspeaker:】 `info diplay` 显示自动显示变量信息
+  - 修改自动显示变量  
+    `disable display m n | m-n` 无效  
+    `enable display m n | m-n` 有效  
+  - 删除自动显示变量  
+    `delete display m n | m-n`   
+    `undisplay m n | m-n`   
+- 修改变量的值
+  - `set var 变量名 = ` 修改变量取值
+
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
