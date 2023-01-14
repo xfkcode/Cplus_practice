@@ -310,6 +310,47 @@ makefile 文件 (多文件编译)：
   - `set var 变量名 = ` 修改变量取值
 
 
+## 3. 文件IO
+
+### 3.1 C库IO函数的工作流程
+
+使用 `fopen` 函数打开一个文件，返回一个 `FILE* pf` ,这个指针执行那个的结构体有三个重要的成员：
+
+1. **文件描述符**：通过文件描述可以找到文件的 `inode` ,通过 `inode` 可以找到对应的数据块
+2. 文件指针：读和写共享一个文件指针，读或写都会引起文件指针的变化
+3. 文件缓冲区：读或写会先通过文件缓冲区，主要目的是为了减少对磁盘的读写次数，提高读写磁盘的效率
+
+【:loudspeaker:】头文件stdio.h的48行处：`typedef struct _IO_FILE FILE`  
+             头文件libio.h的269行处：`struct _IO_FILE` 这个 结构体定义中有一个 `int _fileno` 成员，这个就是文件描述符
+
+### 3.2 C库函数与系统函数的关系
+
+**库函数和系统函数的关系：调用和被调用的关系；库函数是对 系统函数的进一步封装**  
+【:ticket:】系统调用：由操作系统实现并提供给外部应用程序的编程接口  
+（Application Programming Interface，API），是应用程序同系统之间数据交互的桥梁
+
+<font color=CornflowerBlue>***c标准函数***</font>   
+【`printf` 函数 $\rightarrow$ 标准输出(stdout)：FILE*】`printf("hello")` $\rightarrow$【FD/FP_POS/BUFFER】
+
+​									$\downarrow$ 调用 `write` 函数将文件描述符传递过去
+
+<font color=CornflowerBlue>***系统API***</font>  
+【应用层 `write(fd, "hello", 5)`】   
+			用户空间 $\rightarrow$ 内核空间  
+【系统调用 `sys_write()`】  
+					调用设备驱动  
+【内核层 设备驱动函数】
+
+​									$\downarrow$ 通过设备驱动操作硬件
+
+<font color=CornflowerBlue>***硬件层***</font>  
+【硬件 显示器】
+
+### 3.3 虚拟地址空间
+
+
+
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
 > 📅 **写于2023年1月** 
+
