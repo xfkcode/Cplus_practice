@@ -1,6 +1,6 @@
-# makefile-gdb-文件IO
+# makefile-gdb:triangular_flag_on_post: 
 
-## 1. makefile
+## 1. makefile:postbox: 
 
 **makefile** 文件中定义了 一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作，就像是一个shell脚本，其中也可以执行操作系统的命令。
 【:loudspeaker:】**实现自动化编译** :heavy_exclamation_mark::heavy_exclamation_mark::heavy_exclamation_mark: 
@@ -189,7 +189,7 @@ makefile文件：（版本6）
 6 $(target):$(objects)
 7     $(CC) -o $@ $^
 8 %.o:%.c
-9     $(CC) -c $< $(CPPFLAGS)
+9     $(CC) -c $< -g $(CPPFLAGS)
 10 .PHONY:clean
 11 clean:
 12    [@/-]rm -f $(objects) $(target)		//@不显示操作,-该命令报错不影响下面的命令执行
@@ -197,7 +197,94 @@ makefile文件：（版本6）
 
 【:ticket:】`make -f xxxx [clean]` 指定makefile文件（改名）
 
-## 2. gdb调试
+### 1.6 静态库/动态库makefile
+
+#### 1.6.1 静态库
+
+.
+├── app
+│   ├── main.c
+│   └── makefile 静态库使用
+├── include
+│   └── head.h
+├── lib 静态库存储目录
+└── libsrc
+    ├── func1.c
+    ├── func2.c
+    └── makefile 静态库制作
+
+```Linux
+makefile 静态库制作：
+1 src=$(wildcard *.c)
+2 objs=$(patsubst %.c,%.o,$(src))
+3 target=libstl_func.a
+4 $(target):$(objs)
+5     ar rcs $@ $^
+6     mv $@ ../lib
+7 %.o:%.c
+8     gcc -c $< -g -I../include
+9 .PHONY:clean
+10 clean:
+11     -rm -f $(target) $(objs)
+```
+
+```Linux
+makefile 静态库使用：
+1 src=$(wildcard *.c)
+2 objs=$(patsubst %.c,%.o,$(src))
+3 target=main
+4 $(target):$(objs)
+5     gcc -o $@ $^ -L../lib -lstl_func
+6 %.o:%.c
+7     gcc -c $< -g -I../include
+8 .PHONY:clean
+9 clean:
+10     -rm -f $(target) $(objs)
+```
+
+#### 1.6.2 动态库
+
+.
+├── app
+│   ├── main.c
+│   └── makefile 动态库使用
+├── include
+│   └── head.h
+└── libsrc
+    ├── func1.c
+    ├── func2.c
+    └── makefile 动态库制作
+
+```Linux
+makefile 动态库制作：
+1 src=$(wildcard *.c)
+2 objs=$(patsubst %.c,%.o,$(src))
+3 target=libshl_func.so
+4 $(target):$(objs)
+5     gcc -shared -o $@ $^
+6     mv $@ $(HOME)/lib
+7 %.o:%.c
+8     gcc -c -fpic $< -g
+9 .PHONY:clean
+10 clean:
+11     -rm -f $(target) $(objs)
+```
+
+```Linux
+makefile 动态库使用：
+1 src=$(wildcard *.c)
+2 objs=$(patsubst %.c,%.o,$(src))
+3 target=main
+4 $(target):$(objs)
+5     gcc -o $@ $^ -L$(HOME)/lib -lshl_func
+6 %.o:%.c
+7     gcc -c $< -g -I../include
+8 .PHONY:clean
+9 clean:
+10     -rm -f $(target) $(objs)
+```
+
+## 2. gdb调试:tractor: 
 
 ### 2.1 gdb介绍
 
@@ -216,22 +303,6 @@ GDB主要有一下四个方面的功能：
 
 - 编译器（cc/gcc/g++）参数 `-g` 用来生成调试信息  
   `gcc -g hello.c -o hello` （单个文件）  
-
-```Linux
-makefile 文件 (多文件编译)：
-1 target=main
-2 src=$(wildcard *.c)
-3 objects=$(patsubst %.c,%.o,$(src))
-4 CC=gcc
-5 CPPFLAGS=-I./
-6 $(target):$(objects)
-7     $(CC) -o $@ $^
-8 %.o:%.c
-9     $(CC) -c $< $(CPPFLAGS) -g		#源文件编译步骤加入-g
-10 .PHONY:clean
-11 clean:
-12     rm -f $(objects) $(target)
-```
 
 【:loudspeaker:】编译源文件时加 `-g` 
 
@@ -308,47 +379,6 @@ makefile 文件 (多文件编译)：
     `undisplay m n | m-n`   
 - 修改变量的值
   - `set var 变量名 = ` 修改变量取值
-
-
-## 3. 文件IO
-
-### 3.1 C库IO函数的工作流程
-
-使用 `fopen` 函数打开一个文件，返回一个 `FILE* pf` ,这个指针执行那个的结构体有三个重要的成员：
-
-1. **文件描述符**：通过文件描述可以找到文件的 `inode` ,通过 `inode` 可以找到对应的数据块
-2. 文件指针：读和写共享一个文件指针，读或写都会引起文件指针的变化
-3. 文件缓冲区：读或写会先通过文件缓冲区，主要目的是为了减少对磁盘的读写次数，提高读写磁盘的效率
-
-【:loudspeaker:】头文件stdio.h的48行处：`typedef struct _IO_FILE FILE`  
-             头文件libio.h的269行处：`struct _IO_FILE` 这个 结构体定义中有一个 `int _fileno` 成员，这个就是文件描述符
-
-### 3.2 C库函数与系统函数的关系
-
-**库函数和系统函数的关系：调用和被调用的关系；库函数是对 系统函数的进一步封装**  
-【:ticket:】系统调用：由操作系统实现并提供给外部应用程序的编程接口  
-（Application Programming Interface，API），是应用程序同系统之间数据交互的桥梁
-
-<font color=CornflowerBlue>***c标准函数***</font>   
-【`printf` 函数 $\rightarrow$ 标准输出(stdout)：FILE*】`printf("hello")` $\rightarrow$【FD/FP_POS/BUFFER】
-
-​									$\downarrow$ 调用 `write` 函数将文件描述符传递过去
-
-<font color=CornflowerBlue>***系统API***</font>  
-【应用层 `write(fd, "hello", 5)`】   
-			用户空间 $\rightarrow$ 内核空间  
-【系统调用 `sys_write()`】  
-					调用设备驱动  
-【内核层 设备驱动函数】
-
-​									$\downarrow$ 通过设备驱动操作硬件
-
-<font color=CornflowerBlue>***硬件层***</font>  
-【硬件 显示器】
-
-### 3.3 虚拟地址空间
-
-
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
