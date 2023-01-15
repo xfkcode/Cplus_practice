@@ -242,6 +242,121 @@ Linux为每一个运行的程序（进程）操作系统（32位）都会为其�
 
 ## 2. 文件和目录
 
+### 2.1 文件操作相关函数
+
+#### stat/lstat函数
+
+- 函数描述：获取文件属性
+- 函数原型：  
+  `int stat(const char* pathname,struct stat* buf);`  
+  `int lstat(const char* pathname,struct stat* buf);` 
+- 函数返回值：
+  - 成功返回 0 
+  - 失败返回 -1
+
+```C
+ struct stat {
+     dev_t     st_dev;         /* ID of device containing file */
+     ino_t     st_ino;         /* inode number */
+   👉mode_t    st_mode;        /* file type and mode */
+     nlink_t   st_nlink;       /* number of hard links */
+     uid_t     st_uid;         /* user ID of owner */
+     gid_t     st_gid;         /* group ID of owner */
+     dev_t     st_rdev;        /* device ID (if special file) */
+     off_t     st_size;        /* total size, in bytes */
+     blksize_t st_blksize;     /* blocksize for filesystem I/O */
+     blkcnt_t  st_blocks;      /* number of 512B blocks allocated */
+
+     struct timespec st_atim;  /* time of last access */
+     struct timespec st_mtim;  /* time of last modification */
+     struct timespec st_ctim;  /* time of last status change */
+
+     #define st_atime st_atim.tv_sec      /* Backward compatibility */
+     #define st_mtime st_mtim.tv_sec
+     #define st_ctime st_ctim.tv_sec
+ };
+```
+
+【:ticket:】 **st_mode权限** 16位整数
+
+- 0-2bit其他人权限
+
+| 宏        | 值                                                 |
+| --------- | -------------------------------------------------- |
+| `S_IROTH` | 00004（读权限）                                    |
+| `S_IWOTH` | 00002（写权限）                                    |
+| `S_IXOTH` | 00001（执行权限）                                  |
+| `S_IRWXO` | 00007（掩码，过滤st_mode中除其他人权限以外的信息） |
+
+```C
+//判断其他人权限
+if (si_mode & S_IROTH)	//True可读
+if (si_mode & S_IWOTH)	//True可写
+if (si_mode & S_IXOTH)	//True可执行
+```
+
+- 3-5bit所属组权限
+
+| 宏        | 值                                                 |
+| --------- | -------------------------------------------------- |
+| `S_IRGRP` | 00040（读权限）                                    |
+| `S_IWGRP` | 00020（写权限）                                    |
+| `S_IXGRP` | 00010（执行权限）                                  |
+| `S_IRWXG` | 00070（掩码，过滤st_mode中除所属组权限以外的信息） |
+
+```C
+//判断所属组权限
+if (si_mode & S_IRGRP)	//True可读
+if (si_mode & S_IWGRP)	//True可写
+if (si_mode & S_IXGRP)	//True可执行
+```
+
+- 6-8bit所有者权限
+
+| 宏        | 值                                                 |
+| --------- | -------------------------------------------------- |
+| `S_IRUSR` | 00400（读权限）                                    |
+| `S_IWUSR` | 00200（写权限）                                    |
+| `S_IXUSR` | 00100（执行权限）                                  |
+| `S_IRWXU` | 00700（掩码，过滤st_mode中除所有者权限以外的信息） |
+
+```C
+//判断所有者权限
+struct stat st;
+stat(pathname, &st);
+if (st.si_mode & S_IRUSR)	//True可读
+if (st.si_mode & S_IWUSR)	//True可写
+if (st.si_mode & S_IXUSR)	//True可执行
+```
+
+- 12-15bit文件类型
+
+| 宏         | 值                          |
+| ---------- | --------------------------- |
+| `S_IFSOCK` | 0140000（socket）           |
+| `S_IFLNK`  | 0120000（symbolic link）    |
+| `S_IFREG`  | 0100000（regular file）     |
+| `S_IFBLK`  | 0060000（block device）     |
+| `S_IFDIR`  | 0040000（directory）        |
+| `S_IFCHR`  | 0020000（character device） |
+| `S_IFIFO`  | 0010000（FIFO）             |
+
+【:japanese_goblin:】 `S_IFMT` 0170000 掩码
+
+```C
+//判断文件类型
+struct stat st;
+stat(pathname, &st);
+if ((st.st_mode & S_IFMT)==S_IFREG)	//True普通文件
+if (S_IFREG(st.st_mode))			//True普通文件
+```
+
+【:loudspeaker:】**stat/lstat函数**  
+             1.对于普通文件来说，两者相同  
+             2.对于软连接文件来说，lstat函数获取的是链接文件本身的属性，stat函数获取的是链接文件指向的文件属性
+
+### 2.2 目录操作相关函数
+
 
 
 ---
