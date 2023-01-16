@@ -357,20 +357,49 @@ if (S_IFREG(st.st_mode))			//True普通文件
 
 ### 2.2 目录操作相关函数
 
-#### opendir函数
-
 ```C
 #include <sys/types.h>
 #include <dirent.h>
 ```
 
-- 函数描述：
+#### opendir函数
+
+- 函数描述：打来目录
 - 函数原型：  
   `DIR *opendir(const char *name);` 
+- 函数返回值：
+  - 成功：目录流指针
+  - 错误：返回 NULL ，并设置 `errno` 
 
 #### readdir函数
 
+- 函数描述：读取目录
+- 函数原型：  
+  `struct dirent *readdir(DIR *dirp);` 
+- 函数返回值：
+  - 成功：返回 dirent 结构体
+  - 目录末尾：返回 NULL
+  - 错误：返回 NULL ，并设置 `errno` 
+
+```C
+struct dirent {
+    ino_t          d_ino;       /* inode number */
+    off_t          d_off;       /* not an offset; see NOTES */
+    unsigned short d_reclen;    /* length of this record */
+    unsigned char  d_type;      /* type of file; not supported
+                                   by all file system types */
+    char           d_name[256]; /* filename */
+};
+```
+
 #### closedir函数
+
+- 函数描述：关闭目录
+- 函数原型：  
+  `int closedir(DIR *dirp);` 
+- 函数返回值：
+  - 成功：返回 0 
+  - 错误：返回 -1 ，并设置 `errno` 
 
 #### 读取目录内容的一般步骤
 
@@ -402,33 +431,114 @@ if (S_IFREG(st.st_mode))			//True普通文件
  21     struct dirent *pDent = NULL;
  22     while((pDent=readdir(pDir))!=NULL)
  23     {
- 24         printf("[%s]\n",pDent->d_name);
- 25         //判断文件类型
- 26         switch(pDent->d_type)
- 27         {
- 28             case DT_REG:
- 29                 printf("普通文件");
- 30                 break;
- 31             case DT_DIR:
- 32                 printf("目录文件");
- 33                 break;
- 34             case DT_LNK:
- 35                 printf("链接文件");
- 36                 break;
- 37             default:
- 38                 printf("未知文件");
- 39                 break;
- 40         }
- 41         printf("\n");
- 42     }
- 43 
- 44     //关闭目录
- 45     closedir(pDir);
- 46     return 0;
- 47 }
+ 24         //过滤./.. 
+ 25         if (strcmp(pDent->d_name,".")==0 || strcmp(pDent->d_name,"..")==0)
+ 26         {
+ 27             continue;
+ 28         }
+ 29         printf("[%s]--->",pDent->d_name);
+ 30         //判断文件类型
+ 31         switch(pDent->d_type)
+ 32         {
+ 33             case DT_REG:
+ 34                 printf("普通文件");
+ 35                 break;
+ 36             case DT_DIR:
+ 37                 printf("目录文件");
+ 38                 break;
+ 39             case DT_LNK:
+ 40                 printf("链接文件");
+ 41                 break;
+ 42             default:
+ 43                 printf("未知文件");
+ 44                 break;
+ 45         }
+ 46         printf("\n");
+ 47     }
+ 48 
+ 49     //关闭目录
+ 50     closedir(pDir);
+ 51     return 0;
+ 52 }
 ```
 
+### 2.3 dup/dup2/fcntl
 
+```C
+#include <unistd.h>
+#include <fcntl.h>
+```
+
+#### dup函数
+
+- 函数描述：复制文件描述符  
+  两个文件描述符指向同一个文件（类似硬链接）计数为 0 才被关闭
+- 函数原型：  
+  `int dup(int fildes);` 
+- 函数参数：`fildes` 要复制的文件描述符
+- 函数返回值：
+  - 成功：返回最小且没被占用的文件描述符
+  - 错误：返回 -1 ，并设置 `errno` 
+
+#### dup2函数
+
+- 函数描述：复制文件描述符
+- 函数原型：  
+  `int dup2(int fildes, int fildes2);` 
+-  函数参数：
+  - `fildes` 原文件描述符
+  - `fildes2` 新文件描述符（指定）  
+    若指定的文件描述已被占用，则关闭指向文件，重新指向 `fildes` 原文件
+- 函数返回值：
+  - 成功：返回新文件描述符
+  - 错误：返回 -1 ，并设置 `errno` 
+
+```C
+  1 //使用dup2函数实现标准输出重定向
+  2 #include<stdio.h>
+  3 #include<stdlib.h>
+  4 #include<string.h>
+  5 #include<sys/types.h>
+  6 #include<sys/stat.h>
+  7 #include<unistd.h>
+  8 #include<fcntl.h>
+  9 
+ 10 int main(int argc, char *argv[])
+ 11 {
+ 12     //打开文件
+ 13     int fd = open(argv[1], O_RDWR | O_CREAT, 0777);
+ 14     if (fd<0)
+ 15     {
+ 16         perror("open error");
+ 17         return -1;
+ 18     }
+ 19     //调用dup2函数实现文件重定向
+ 20     dup2(fd, STDOUT_FILENO);
+ 21 
+ 22     printf("hello world");
+ 23 
+ 24     //关闭文件
+ 25     close(fd);
+ 26     
+ 27     return 0;
+ 28 }
+```
+
+#### fcntl函数
+
+- 函数描述：改变已打开的文件的属性
+- 函数原型：  
+  `int fcntl(int fildes, int cmd, ...);` 
+- 函数参数：
+  - `cmd` F_DUPFD，复制文件描述符（dup）
+  - `cmd` F_GETFL，获取文件描述符的 flag 属性值
+  - `cmd` F_SETFL，设置文件描述符的 flag 属性
+- 函数返回值：
+  - 成功：
+    - `cmd` F_DUPFD，返回新的文件描述符
+    - `cmd` F_GETFL，返回文件描述符的 flags 属性值
+    - `cmd` F_SETFL，返回 0 
+  - 错误：返回 -1 ，并设置 `errno` 
 
 ---
 > ✍️ [邢福凯 (xfkcode@github)](https://github.com/xfkcode)  
