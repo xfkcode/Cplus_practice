@@ -357,6 +357,77 @@ if (S_IFREG(st.st_mode))			//True普通文件
 
 ### 2.2 目录操作相关函数
 
+#### opendir函数
+
+```C
+#include <sys/types.h>
+#include <dirent.h>
+```
+
+- 函数描述：
+- 函数原型：  
+  `DIR *opendir(const char *name);` 
+
+#### readdir函数
+
+#### closedir函数
+
+#### 读取目录内容的一般步骤
+
+1. `DIR *pDir = opendir("dir");` 打开目录 
+2. `while((p = readdir(pDir)) != NULL){}` 循环读取文件
+3. `closedir(pDir);` 关闭目录
+
+```C
+  1 //目录操作测试：opendir readdir closedir
+  2 #include<stdio.h>
+  3 #include<stdlib.h>
+  4 #include<string.h>
+  5 #include<sys/types.h>
+  6 #include<unistd.h>
+  7 #include<dirent.h>
+  8 
+  9 int main(int argc, char *argv[])
+ 10 {
+ 11     //打开目录
+ 12     //DIR *opendir(const char ＊name);
+ 13     DIR *pDir = opendir(argv[1]);
+ 14     if (pDir==NULL)
+ 15     {
+ 16         perror("opendir error");
+ 17         return -1;
+ 18     }
+ 19 
+ 20     //循环读取目录
+ 21     struct dirent *pDent = NULL;
+ 22     while((pDent=readdir(pDir))!=NULL)
+ 23     {
+ 24         printf("[%s]\n",pDent->d_name);
+ 25         //判断文件类型
+ 26         switch(pDent->d_type)
+ 27         {
+ 28             case DT_REG:
+ 29                 printf("普通文件");
+ 30                 break;
+ 31             case DT_DIR:
+ 32                 printf("目录文件");
+ 33                 break;
+ 34             case DT_LNK:
+ 35                 printf("链接文件");
+ 36                 break;
+ 37             default:
+ 38                 printf("未知文件");
+ 39                 break;
+ 40         }
+ 41         printf("\n");
+ 42     }
+ 43 
+ 44     //关闭目录
+ 45     closedir(pDir);
+ 46     return 0;
+ 47 }
+```
+
 
 
 ---
