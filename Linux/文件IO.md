@@ -1,4 +1,4 @@
-# 文件IO
+# 文件IO:card_file_box: 
 
 ## 1. 文件IO:open_file_folder: 
 
@@ -240,7 +240,7 @@ Linux为每一个运行的程序（进程）操作系统（32位）都会为其�
 
 阻塞：设备文件/ socket/ pipe
 
-## 2. 文件和目录
+## 2. 文件和目录:file_cabinet: 
 
 ### 2.1 文件操作相关函数
 
@@ -364,7 +364,7 @@ if (S_IFREG(st.st_mode))			//True普通文件
 
 #### opendir函数
 
-- 函数描述：打来目录
+- 函数描述：打开目录
 - 函数原型：  
   `DIR *opendir(const char *name);` 
 - 函数返回值：
@@ -373,11 +373,12 @@ if (S_IFREG(st.st_mode))			//True普通文件
 
 #### readdir函数
 
-- 函数描述：读取目录
+- 函数描述：读取目录--目录项
 - 函数原型：  
   `struct dirent *readdir(DIR *dirp);` 
+- 函数参数：`opendir` 函数返回值
 - 函数返回值：
-  - 成功：返回 dirent 结构体
+  - 成功：读取的目录项指针
   - 目录末尾：返回 NULL
   - 错误：返回 NULL ，并设置 `errno` 
 
@@ -530,13 +531,17 @@ struct dirent {
 - 函数原型：  
   `int fcntl(int fildes, int cmd, ...);` 
 - 函数参数：
-  - `cmd` F_DUPFD，复制文件描述符（dup）
-  - `cmd` F_GETFL，获取文件描述符的 flag 属性值
-  - `cmd` F_SETFL，设置文件描述符的 flag 属性
+  - `cmd` F_DUPFD，复制文件描述符（dup）  
+    `int newfd = fcntl(fd, F_DUPFD, 0);` 
+  - `cmd` F_GETFL，获取文件描述符的 flag 属性值  
+    `int flag = fcntl(fd, F_GETFL, 0);` 
+  - `cmd` F_SETFL，设置文件描述符的 flag 属性   
+    `flag |= O_APPEND;`  
+    `fcntl(fd, F_SETFL, flag);`  
 - 函数返回值：
   - 成功：
     - `cmd` F_DUPFD，返回新的文件描述符
-    - `cmd` F_GETFL，返回文件描述符的 flags 属性值
+    - `cmd` F_GETFL，返回文件描述符的 flag 属性值
     - `cmd` F_SETFL，返回 0 
   - 错误：返回 -1 ，并设置 `errno` 
 
