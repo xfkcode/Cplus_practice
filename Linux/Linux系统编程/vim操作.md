@@ -497,10 +497,10 @@ func1.c  func1.o  func2.c  func2.o  include  lib  main  main.c
 
 ```Linux
 [xfk@centos SLib]$ ldd main
-        linux-vdso.so.1 =>  (0x00007ffdeeff8000)
-        libtest2.so => not found
-        libc.so.6 => /lib64/libc.so.6 (0x00007f32617c2000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f3261b8f000)
+linux-vdso.so.1 =>  (0x00007ffdeeff8000)
+libtest2.so => not found
+libc.so.6 => /lib64/libc.so.6 (0x00007f32617c2000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f3261b8f000)
 ```
 
 【:question:】 原因：
